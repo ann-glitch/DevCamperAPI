@@ -1,3 +1,4 @@
+const ErrorResponse = require("../utils/errorResponse");
 const Bootcamp = require("../models/Bootcamp");
 
 // @description  Get all bootcamps
@@ -13,10 +14,7 @@ exports.getBootcamps = async (req, res, next) => {
       data: bootcamps,
     });
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      error: "failed to fetch bootcamps",
-    });
+    next(err);
   }
 };
 
@@ -28,9 +26,12 @@ exports.getBootcamp = async (req, res, next) => {
     const bootcamp = await Bootcamp.findById(req.params.id);
 
     if (!bootcamp) {
-      return res.status(400).json({
-        error: "Invalid Id",
-      });
+      return next(
+        new ErrorResponse(
+          `Bootcamp with id ${req.params.id} does not exist`,
+          404
+        )
+      );
     }
 
     res.status(200).json({
@@ -38,10 +39,7 @@ exports.getBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      error: "failed to fetch bootcamp",
-    });
+    next(err);
   }
 };
 
@@ -57,10 +55,7 @@ exports.createBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      error: "failed to create bootcamp",
-    });
+    next(err);
   }
 };
 
@@ -75,9 +70,12 @@ exports.updateBootcamp = async (req, res, next) => {
     });
 
     if (!bootcamp) {
-      return res.status(400).json({
-        error: "Bootcamp does not exist",
-      });
+      return next(
+        new ErrorResponse(
+          `Bootcamp with id ${req.params.id} does not exist`,
+          404
+        )
+      );
     }
 
     res.status(200).json({
@@ -85,10 +83,7 @@ exports.updateBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      error: "failed to update bootcamp",
-    });
+    next(err);
   }
 };
 
@@ -100,19 +95,18 @@ exports.deleteBootcamp = async (req, res, next) => {
     const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
 
     if (!bootcamp) {
-      return res.status(400).json({
-        error: "Bootcamp does not exist",
-      });
+      return next(
+        new ErrorResponse(
+          `Bootcamp with id ${req.params.id} does not exist`,
+          404
+        )
+      );
     }
-
     res.status(200).json({
       success: true,
       data: {},
     });
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      error: "failed to delete bootcamp",
-    });
+    next(err);
   }
 };
