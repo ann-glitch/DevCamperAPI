@@ -4,8 +4,8 @@ const Course = require("../models/Course");
 const Bootcamp = require("../models/Bootcamp");
 
 // @description  Get all courses
-// @route  /api/v1/courses
-// @route  /api/v1/bootcamps/:bootcampId/courses
+// @route  GET /api/v1/courses
+// @route  GET /api/v1/bootcamps/:bootcampId/courses
 // @access  public
 exports.getCourses = asyncHandler(async (req, res) => {
   let query;
@@ -29,7 +29,7 @@ exports.getCourses = asyncHandler(async (req, res) => {
 });
 
 // @description  Get Single Course
-// @route  /api/v1/courses/:id
+// @route  GET /api/v1/courses/:id
 // @access  public
 exports.getCourse = asyncHandler(async (req, res) => {
   const course = await Course.findById(req.params.id).populate({
@@ -48,7 +48,7 @@ exports.getCourse = asyncHandler(async (req, res) => {
 });
 
 // @description  Add course
-// @route  /api/v1/bootcamps/:bootcampId/courses
+// @route  POST /api/v1/bootcamps/:bootcampId/courses
 // @access  private
 exports.addCourse = asyncHandler(async (req, res) => {
   req.body.bootcamp = req.params.bootcampId;
@@ -56,12 +56,51 @@ exports.addCourse = asyncHandler(async (req, res) => {
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
   if (!bootcamp) {
-    return new ErrorResponse(`No bootcamp with the id ${req.params.id}`, 404);
+    return new ErrorResponse(
+      `No bootcamp with the id ${req.params.bootcampId}`,
+      404
+    );
   }
   const courses = await Course.create(req.body);
 
   res.status(200).json({
     success: true,
     data: courses,
+  });
+});
+
+// @description  Update course
+// @route  UPDATE /api/v1/courses/:id
+// @access  private
+exports.updateCourse = asyncHandler(async (req, res) => {
+  const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!course) {
+    return new ErrorResponse(`No bootcamp with the id ${req.params.id}`, 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    data: course,
+  });
+});
+
+// @description  Delete course
+// @route  DELETE /api/v1/courses/:id
+// @access  private
+exports.deleteCourse = asyncHandler(async (req, res) => {
+  const course = await Course.findById(req.params.id);
+
+  if (!course) {
+    return new ErrorResponse(`No bootcamp with the id ${req.params.id}`, 404);
+  }
+  await course.remove();
+
+  res.status(200).json({
+    success: true,
+    data: {},
   });
 });
