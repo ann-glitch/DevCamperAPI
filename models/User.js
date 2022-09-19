@@ -54,4 +54,9 @@ UserSchema.methods.getSignedWebToken = function () {
   });
 };
 
+//match password to hashed password
+UserSchema.methods.matchPassword = async function (matchedPassword) {
+  return await bcrypt.compare(matchedPassword, this.password);
+};
+
 module.exports = mongoose.model("User", UserSchema);
