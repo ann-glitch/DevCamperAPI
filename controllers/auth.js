@@ -45,11 +45,11 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 // @description  Log User Out / Clear cookie
-// @route   POST /api/v1/auth/logout
+// @route   GET /api/v1/auth/logout
 // @access  private
 exports.logout = asyncHandler(async (req, res, next) => {
-  req.cookies("token", "none", {
-    expires: new Date(Date.now() + 10 * 60 * 1000),
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
 
