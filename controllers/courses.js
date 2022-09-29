@@ -24,14 +24,16 @@ exports.getCourses = asyncHandler(async (req, res) => {
 // @description  Get Single Course
 // @route  GET /api/v1/courses/:id
 // @access  public
-exports.getCourse = asyncHandler(async (req, res) => {
+exports.getCourse = asyncHandler(async (req, res, next) => {
   const course = await Course.findById(req.params.id).populate({
     path: "bootcamp",
     select: "name description",
   });
 
   if (!course) {
-    return new ErrorResponse(`Course with id ${req.params.id} not found`, 404);
+    return next(
+      new ErrorResponse(`Course with id ${req.params.id} not found`, 404)
+    );
   }
 
   res.status(200).json({
@@ -67,7 +69,7 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
 
   const courses = await Course.create(req.body);
 
-  res.status(200).json({
+  res.status(201).json({
     success: true,
     data: courses,
   });
@@ -81,7 +83,7 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
 
   if (!course) {
     return next(
-      new ErrorResponse(`No bootcamp with the id ${req.params.id}`, 404)
+      new ErrorResponse(`No course with the id ${req.params.id}`, 404)
     );
   }
 

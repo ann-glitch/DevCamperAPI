@@ -14,14 +14,16 @@ const Bootcamp = require("../models/Bootcamp");
 
 //include other resources
 const courseRouter = require("./courses");
-
-const router = express.Router();
+const reviewRouter = require("./reviews");
 
 const advancedResults = require("../middleware/advancedResults");
 const { protect, authorize } = require("../middleware/auth");
 
+const router = express.Router();
+
 //re-route into other resource routers
 router.use("/:bootcampId/courses", courseRouter);
+router.use("/:bootcampId/reviews", reviewRouter);
 
 router
   .route("/")
